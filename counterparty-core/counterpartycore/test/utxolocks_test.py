@@ -7,11 +7,12 @@ import bitcoin
 
 from counterpartycore.lib import transaction
 from counterpartycore.lib.messages import send
-from counterpartycore.test import (
-    conftest,  # noqa: F401
-)
 
 # this is require near the top to do setup of the test suite
+from counterpartycore.test import (
+    conftest,  # noqa: F401
+    util_test,  # noqa: F401
+)
 from counterpartycore.test.util_test import CURR_DIR
 
 FIXTURE_SQL_FILE = CURR_DIR + "/fixtures/scenarios/parseblock_unittest_fixture.sql"
@@ -20,10 +21,11 @@ FIXTURE_OPTIONS = {"utxo_locks_max_addresses": 2000}
 
 
 def construct_tx(db, source, destination, disable_utxo_locks=False, custom_inputs=None):
-    tx_info = send.compose(db, source, destination, "XCP", 1)
-    return transaction.construct(
-        db, tx_info, disable_utxo_locks=disable_utxo_locks, custom_inputs=custom_inputs
-    )
+    with util_test.MockProtocolChangesContext(new_tx_format=False):
+        tx_info = send.compose(db, source, destination, "XCP", 1)
+        return transaction.construct(
+            db, tx_info, disable_utxo_locks=disable_utxo_locks, custom_inputs=custom_inputs
+        )
 
 
 def test_utxolocks(server_db):

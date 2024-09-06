@@ -610,7 +610,6 @@ def initialise_db(db):
 def run_scenario(scenario):
     """Execute a scenario for integration test, returns a dump of the db, a json with raw transactions and the full log."""
     server.initialise(database_file=":memory:", testnet=True, **COUNTERPARTYD_OPTIONS)
-    config.PREFIX = b"TESTXXXX"
     util.FIRST_MULTISIG_BLOCK_TESTNET = 1
     checkpoints = dict(check.CHECKPOINTS_TESTNET)
     check.CHECKPOINTS_TESTNET = {}

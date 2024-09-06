@@ -197,6 +197,7 @@ def compose(
     lock_quantity=False,
     divisible=True,
     description="",
+    no_validate=False,
 ):
     # validate parameters
     problems = validate(
@@ -219,7 +220,7 @@ def compose(
         divisible,
         description,
     )
-    if len(problems) > 0:
+    if len(problems) > 0 and not no_validate:
         raise exceptions.ComposeError(problems)
 
     minted_asset_commission_int = int(minted_asset_commission * 1e8)

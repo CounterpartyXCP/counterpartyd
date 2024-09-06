@@ -49,11 +49,15 @@ class RegtestNode:
                 print("Waiting for bitcoind to start...")
                 time.sleep(1)
 
-    def send_transaction(self, source, tx_name, params):
+    def send_transaction(self, source, tx_name, params, retry=0, return_only_data=False):
         self.wait_for_counterparty_server()
+        if return_only_data:
+            params["return_only_data"] = 1
         query_string = urllib.parse.urlencode(params)
         if tx_name in ["detach", "movetoutxo"]:
             compose_url = f"utxos/{source}/compose/{tx_name}?{query_string}"
+        elif tx_name == "multiple":
+            compose_url = f"compose?{query_string}"
         else:
             compose_url = f"addresses/{source}/compose/{tx_name}?{query_string}"
         result = self.api_call(compose_url)
@@ -61,11 +65,22 @@ class RegtestNode:
         if "error" in result:
             raise ComposeError(result["error"])
         raw_transaction = result["result"]["rawtransaction"]
+        if return_only_data:
+            return raw_transaction
+        # print(f"Raw transaction: {tx_name} {params} ({raw_transaction})")
         signed_transaction_json = self.bitcoin_wallet(
             "signrawtransactionwithwallet", raw_transaction
         ).strip()
         signed_transaction = json.loads(signed_transaction_json)["hex"]
-        tx_hash = self.bitcoin_wallet("sendrawtransaction", signed_transaction).strip()
+        try:
+            tx_hash = self.bitcoin_wallet("sendrawtransaction", signed_transaction).strip()
+        except sh.ErrorReturnCode_25 as e:
+            if retry >= 2:
+                raise e
+            print("Error: bad-txns-inputs-missingorspent")
+            print("Sleeping for 5 seconds and retrying...")
+            time.sleep(5)
+            return self.send_transaction(source, tx_name, params, retry=retry + 1)
         block_hash, block_time = self.mine_blocks(1)
         self.wait_for_counterparty_server()
         print(f"Transaction sent: {tx_name} {params} ({tx_hash})")
@@ -119,6 +134,7 @@ class RegtestNode:
             print(f"Address {i}: {address}")
             self.addresses.append(address)
             self.mine_blocks(1, address)
+        self.addresses.sort()
         self.mine_blocks(101)
 
     def generate_xcp(self):

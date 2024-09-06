@@ -615,9 +615,9 @@ def generate_asset_name(asset_id, block_index):
     return asset_name
 
 
-def get_asset_id(db, asset_name, block_index):
+def get_asset_id(db, asset_name, block_index, no_validate=False):
     """Return asset_id from asset_name."""
-    if not util.enabled("hotfix_numeric_assets"):
+    if not util.enabled("hotfix_numeric_assets") or no_validate:
         return generate_asset_id(asset_name, block_index)
     cursor = db.cursor()
     query = """
@@ -1969,6 +1969,20 @@ def get_valid_fairmints(db, fairminter_tx_hash):
 
 def update_fairminter(db, tx_hash, update_data):
     insert_update(db, "fairminters", "tx_hash", tx_hash, update_data, "FAIRMINTER_UPDATE")
+
+
+def get_next_send_msg_index(db, tx_hash):
+    cursor = db.cursor()
+    last_msg_index = cursor.execute(
+        """
+        SELECT MAX(msg_index) as msg_index FROM sends WHERE tx_hash = ?
+    """,
+        (tx_hash,),
+    ).fetchone()
+    if last_msg_index and last_msg_index["msg_index"] is not None:
+        return last_msg_index["msg_index"] + 1
+    else:
+        return 0
 
 
 #####################

@@ -104,23 +104,24 @@ def validate(db, source, order_match_id, block_index):
     return destination, btc_quantity, escrowed_asset, escrowed_quantity, order_match, problems
 
 
-def compose(db, source: str, order_match_id: str):
+def compose(db, source: str, order_match_id: str, no_validate=False):
     tx0_hash, tx1_hash = util.parse_id(order_match_id)
 
     destination, btc_quantity, escrowed_asset, escrowed_quantity, order_match, problems = validate(
         db, source, order_match_id, util.CURRENT_BLOCK_INDEX
     )
-    if problems:
+    if problems and not no_validate:
         raise exceptions.ComposeError(problems)
 
-    # Warn if down to the wire.
-    time_left = order_match["match_expire_index"] - util.CURRENT_BLOCK_INDEX
-    if time_left < 4:
-        logger.warning(
-            f"Only {time_left} blocks until that order match expires. The payment might not make into the blockchain in time."
-        )
-    if 10 - time_left < 4:
-        logger.warning(f"Order match has only {10 - time_left} confirmation(s).")
+    if not no_validate:
+        # Warn if down to the wire.
+        time_left = order_match["match_expire_index"] - util.CURRENT_BLOCK_INDEX
+        if time_left < 4:
+            logger.warning(
+                f"Only {time_left} blocks until that order match expires. The payment might not make into the blockchain in time."
+            )
+        if 10 - time_left < 4:
+            logger.warning(f"Order match has only {10 - time_left} confirmation(s).")
 
     tx0_hash_bytes, tx1_hash_bytes = (
         binascii.unhexlify(bytes(tx0_hash, "utf-8")),

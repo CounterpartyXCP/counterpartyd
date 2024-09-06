@@ -32,4 +32,5 @@ python-gnupg==0.5.2
 pyzmq==26.0.3
 JSON-log-formatter==1.0
 yoyo-migrations==8.2.0
+varint==1.0.2
 counterparty-rs==10.3.2

@@ -17,6 +17,7 @@ from operator import itemgetter
 
 import gnupg
 import requests
+import varint
 from counterparty_rs import utils as pycoin_rs_utils
 
 from counterpartycore.lib import config, exceptions
@@ -638,3 +639,47 @@ def is_utxo_format(value):
     if len(values[0]) != 64:
         return False
     return True
+
+
+def prefix(block_index):
+    if config.TESTCOIN:
+        return b"XX"  # 2 bytes (possibly accidentally created)
+    else:
+        return b"CNTRPRTY"  # 8 bytes
+
+
+def bools_to_byte(
+    v0: bool = False,
+    v1: bool = False,
+    v2: bool = False,
+    v3: bool = False,
+    v4: bool = False,
+    v5: bool = False,
+    v6: bool = False,
+    v7: bool = False,
+) -> bytes:
+    flags = 0
+    for i, v in enumerate([v0, v1, v2, v3, v4, v5, v6, v7]):
+        if v:
+            flags |= 1 << i
+    return bytes([flags])  # Convertit l'entier en un objet bytes d'un seul octet
+
+
+def get_flag(flags: bytes, pos: int) -> bool:
+    if len(flags) != 1:
+        raise ValueError("Les flags doivent être un seul octet")
+    if pos < 0 or pos > 7:
+        raise ValueError("La position doit être entre 0 et 7")
+    return bool(flags[0] & (1 << pos))
+
+
+def gen_flags(signed=False, compressed=False):
+    return bools_to_byte(signed, compressed)
+
+
+def read_varint(stream):
+    """Read a varint from a stream."""
+    try:
+        return varint.decode_stream(stream)
+    except (TypeError, EOFError):
+        return None

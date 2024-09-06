@@ -68,23 +68,23 @@ def validate(db, source, destination, asset, quantity, block_index):
     return problems
 
 
-def compose_send_btc(db, source: str, destination: str, quantity: int):
+def compose_send_btc(db, source: str, destination: str, quantity: int, no_validate=False):
     if not util.enabled("enable_dispense_tx"):
         return (source, [(destination, quantity)], None)
     # try to compose a dispense instead
     try:
-        return dispense.compose(db, source, destination, quantity)
+        return dispense.compose(db, source, destination, quantity, no_validate)
     except (exceptions.NoDispenserError, exceptions.ComposeError):
         # simple BTC send
         return (source, [(destination, quantity)], None)
 
 
-def compose(db, source: str, destination: str, asset: str, quantity: int):
+def compose(db, source: str, destination: str, asset: str, quantity: int, no_validate=False):
     cursor = db.cursor()
 
     # Just send BTC?
     if asset == config.BTC:
-        return compose_send_btc(db, source, destination, quantity)
+        return compose_send_btc(db, source, destination, quantity, no_validate)
 
     # resolve subassets
     asset = ledger.resolve_subasset_longname(db, asset)
@@ -93,15 +93,16 @@ def compose(db, source: str, destination: str, asset: str, quantity: int):
     if not isinstance(quantity, int):
         raise exceptions.ComposeError("quantity must be an int (in satoshi)")
 
-    # Only for outgoing (incoming will overburn).
-    balance = ledger.get_balance(db, source, asset)
-    if balance < quantity:
-        raise exceptions.ComposeError("insufficient funds")
+    if not no_validate:
+        # Only for outgoing (incoming will overburn).
+        balance = ledger.get_balance(db, source, asset)
+        if balance < quantity:
+            raise exceptions.ComposeError("insufficient funds")
 
     block_index = util.CURRENT_BLOCK_INDEX
 
     problems = validate(db, source, destination, asset, quantity, block_index)
-    if problems:
+    if problems and not no_validate:
         raise exceptions.ComposeError(problems)
 
     asset_id = ledger.get_asset_id(db, asset, block_index)

@@ -119,11 +119,12 @@ def validate(db, source, destination, asset, quantity):
         raise BalanceError("balance insufficient")  # noqa: F405
 
 
-def compose(db, source: str, asset: str, quantity: int, tag: str):
+def compose(db, source: str, asset: str, quantity: int, tag: str, no_validate=False):
     # resolve subassets
     asset = ledger.resolve_subasset_longname(db, asset)
 
-    validate(db, source, None, asset, quantity)
+    if not no_validate:
+        validate(db, source, None, asset, quantity)
     data = pack(db, asset, quantity, tag)
 
     return (source, [], data)

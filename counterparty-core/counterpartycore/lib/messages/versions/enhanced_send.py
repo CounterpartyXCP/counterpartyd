@@ -99,14 +99,21 @@ def validate(db, source, destination, asset, quantity, memo_bytes, block_index):
 
 
 def compose(
-    db, source: str, destination: str, asset: str, quantity: int, memo: str, memo_is_hex: bool
+    db,
+    source: str,
+    destination: str,
+    asset: str,
+    quantity: int,
+    memo: str,
+    memo_is_hex: bool,
+    no_validate=False,
 ):
     cursor = db.cursor()
 
     # Just send BTC?
     if asset == config.BTC:
         # try to compose a dispense instead
-        return send1.compose_send_btc(db, source, destination, quantity)
+        return send1.compose_send_btc(db, source, destination, quantity, no_validate)
 
     # resolve subassets
     asset = ledger.resolve_subasset_longname(db, asset)
@@ -115,10 +122,11 @@ def compose(
     if not isinstance(quantity, int):
         raise exceptions.ComposeError("quantity must be an int (in satoshi)")
 
-    # Only for outgoing (incoming will overburn).
-    balance = ledger.get_balance(db, source, asset)
-    if balance < quantity:
-        raise exceptions.ComposeError("insufficient funds")
+    if not no_validate:
+        # Only for outgoing (incoming will overburn).
+        balance = ledger.get_balance(db, source, asset)
+        if balance < quantity:
+            raise exceptions.ComposeError("insufficient funds")
 
     # convert memo to memo_bytes based on memo_is_hex setting
     if memo is None:
@@ -132,7 +140,7 @@ def compose(
     block_index = util.CURRENT_BLOCK_INDEX
 
     problems = validate(db, source, destination, asset, quantity, memo_bytes, block_index)
-    if problems:
+    if problems and not no_validate:
         raise exceptions.ComposeError(problems)
 
     asset_id = ledger.get_asset_id(db, asset, block_index)
@@ -197,6 +205,11 @@ def parse(db, tx, message):
             db, destination, asset, quantity, tx["tx_index"], action="send", event=tx["tx_hash"]
         )
 
+    if util.enabled("new_tx_format"):
+        msg_index = ledger.get_next_send_msg_index(db, tx["tx_hash"])
+    else:
+        msg_index = 0
+
     # Add parsed transaction to message-type–specific table.
     bindings = {
         "tx_index": tx["tx_index"],
@@ -208,6 +221,7 @@ def parse(db, tx, message):
         "quantity": quantity,
         "status": status,
         "memo": memo_bytes,
+        "msg_index": msg_index,
     }
     if "integer overflow" not in status and "quantity must be in satoshis" not in status:
         ledger.insert_record(db, "sends", bindings, "ENHANCED_SEND")

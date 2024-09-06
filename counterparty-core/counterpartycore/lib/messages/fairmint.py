@@ -101,9 +101,10 @@ def compose(
     source,
     asset,
     quantity=0,
+    no_validate=False,
 ):
     problems = validate(db, source, asset, quantity)
-    if len(problems) > 0:
+    if len(problems) > 0 and not no_validate:
         raise exceptions.ComposeError(problems)
 
     # create message

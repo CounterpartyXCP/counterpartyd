@@ -955,7 +955,7 @@ class APIServer(threading.Thread):
         @dispatcher.add_method
         def unpack(data_hex):
             data = binascii.unhexlify(data_hex)
-            message_type_id, message = message_type.unpack(data)
+            message_type_id, message = message_type.unpack(data)[0]
 
             # TODO: Enabled only for `send`.
             if message_type_id == send.ID:

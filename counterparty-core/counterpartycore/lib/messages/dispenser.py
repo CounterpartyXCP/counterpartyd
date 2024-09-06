@@ -382,6 +382,7 @@ def compose(
     status: int,
     open_address: str = None,
     oracle_address: str = None,
+    no_validate=False,
 ):
     assetid, problems = validate(
         db,
@@ -395,7 +396,7 @@ def compose(
         util.CURRENT_BLOCK_INDEX,
         oracle_address,
     )
-    if problems:
+    if problems and not no_validate:
         raise exceptions.ComposeError(problems)
 
     destination = []

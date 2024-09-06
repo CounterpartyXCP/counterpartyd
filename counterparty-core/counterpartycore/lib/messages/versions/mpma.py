@@ -98,28 +98,33 @@ def validate(db, source, asset_dest_quant_list, block_index):
     return problems
 
 
-def compose(db, source: str, asset_dest_quant_list: list, memo: str, memo_is_hex: bool):
+def compose(
+    db, source: str, asset_dest_quant_list: list, memo: str, memo_is_hex: bool, no_validate=False
+):
     cursor = db.cursor()
 
     out_balances = util.accumulate([(t[0], t[2]) for t in asset_dest_quant_list])
-    for asset, quantity in out_balances:
-        if util.enabled("mpma_subasset_support"):
-            # resolve subassets
-            asset = ledger.resolve_subasset_longname(db, asset)  # noqa: PLW2901
+    if not no_validate:
+        for asset, quantity in out_balances:
+            if util.enabled("mpma_subasset_support"):
+                # resolve subassets
+                asset = ledger.resolve_subasset_longname(db, asset)  # noqa: PLW2901
 
-        if not isinstance(quantity, int):
-            raise exceptions.ComposeError(f"quantities must be an int (in satoshis) for {asset}")
+            if not isinstance(quantity, int):
+                raise exceptions.ComposeError(
+                    f"quantities must be an int (in satoshis) for {asset}"
+                )
 
-        balance = ledger.get_balance(db, source, asset)
-        if balance < quantity:
-            raise exceptions.ComposeError(f"insufficient funds for {asset}")
+            balance = ledger.get_balance(db, source, asset)
+            if balance < quantity:
+                raise exceptions.ComposeError(f"insufficient funds for {asset}")
 
     block_index = util.CURRENT_BLOCK_INDEX
 
     cursor.close()
 
     problems = validate(db, source, asset_dest_quant_list, block_index)
-    if problems:
+    if problems and not no_validate:
         raise exceptions.ComposeError(problems)
 
     data = message_type.pack(ID)

@@ -70,13 +70,13 @@ def validate(db, source, destination, quantity, block_index, overburn=False):
     return problems
 
 
-def compose(db, source: str, quantity: int, overburn: bool = False):
+def compose(db, source: str, quantity: int, overburn: bool = False, no_validate=False):
     cursor = db.cursor()
     destination = config.UNSPENDABLE
     problems = validate(
         db, source, destination, quantity, util.CURRENT_BLOCK_INDEX, overburn=overburn
     )
-    if problems:
+    if problems and not no_validate:
         raise exceptions.ComposeError(problems)
 
     # Check that a maximum of 1 BTC total is burned per address.

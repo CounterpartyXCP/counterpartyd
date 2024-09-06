@@ -630,5 +630,12 @@
         }
       }
     }
+  },
+  "new_tx_format": {
+    "minimum_version_major": 10,
+    "minimum_version_minor": 4,
+    "minimum_version_revision": 0,
+    "block_index": 900000,
+    "testnet_block_index": 2815000
   }
 }

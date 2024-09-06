@@ -12,7 +12,7 @@ import logging
 import bitcoin as bitcoinlib
 from bitcoin.bech32 import CBech32Data
 
-from counterpartycore.lib import arc4, backend, config, exceptions, script  # noqa: F401
+from counterpartycore.lib import arc4, backend, config, exceptions, script, util  # noqa: F401
 from counterpartycore.lib.transaction_helper import p2sh_encoding
 
 logger = logging.getLogger(config.LOGGER_NAME)
@@ -187,6 +187,7 @@ def serialise(
     encoding,
     inputs,
     destination_outputs,
+    block_index,
     data_output=None,
     change_output=None,
     dust_return_pubkey=None,
@@ -261,7 +262,7 @@ def serialise(
         data_array, value = data_output
         s += value.to_bytes(8, byteorder="little")  # Value
 
-        data_chunk = config.PREFIX + data_chunk  # noqa: PLW2901
+        data_chunk = util.prefix(block_index) + data_chunk  # noqa: PLW2901
 
         # Initialise encryption key (once per output).
         assert isinstance(inputs[0]["txid"], str)
@@ -347,6 +348,7 @@ def serialise_p2sh_pretx(
     source,
     source_value,
     data_output,
+    block_index,
     change_output=None,
     pubkey=None,
     multisig_pubkeys=None,
@@ -382,7 +384,7 @@ def serialise_p2sh_pretx(
 
     # P2SH for data encodeded inputs
     for n, data_chunk in enumerate(data_array):
-        data_chunk = config.PREFIX + data_chunk  # prefix the data_chunk  # noqa: PLW2901
+        data_chunk = util.prefix(block_index) + data_chunk  # prefix the data_chunk  # noqa: PLW2901
 
         # get the scripts
         script_sig, redeem_script, output_script = p2sh_encoding.make_p2sh_encoding_redeemscript(
@@ -417,6 +419,7 @@ def serialise_p2sh_datatx(
     source_input,
     destination_outputs,
     data_output,
+    block_index,
     pubkey=None,
     multisig_pubkeys=None,
     multisig_pubkeys_required=None,
@@ -450,7 +453,7 @@ def serialise_p2sh_datatx(
 
     # list of inputs
     for n, data_chunk in enumerate(data_array):
-        data_chunk = config.PREFIX + data_chunk  # prefix the data_chunk  # noqa: PLW2901
+        data_chunk = util.prefix(block_index) + data_chunk  # prefix the data_chunk  # noqa: PLW2901
 
         # get the scripts
         script_sig, redeem_script, output_script = p2sh_encoding.make_p2sh_encoding_redeemscript(
@@ -487,7 +490,7 @@ def serialise_p2sh_datatx(
 
     # opreturn to signal P2SH encoding
     key = arc4.init_arc4(txid)
-    data_chunk = config.PREFIX + b"P2SH"
+    data_chunk = util.prefix(block_index) + b"P2SH"
     data_chunk = key.encrypt(data_chunk)
     tx_script = OP_RETURN  # OP_RETURN
     tx_script += op_push(len(data_chunk))  # Push bytes of data chunk

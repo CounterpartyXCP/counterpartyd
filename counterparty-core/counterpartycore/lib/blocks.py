@@ -125,88 +125,89 @@ def parse_tx(db, tx):
 
             if len(tx["data"]) > 1:
                 try:
-                    message_type_id, message = message_type.unpack(tx["data"], tx["block_index"])
-                except struct.error:  # Deterministically raised.
-                    message_type_id = None
-                    message = None
+                    messages = message_type.unpack(tx["data"], tx["block_index"])
+                except (struct.error, TypeError):  # Deterministically raised.
+                    messages = [(None, None)]
             else:
-                message_type_id = None
-                message = None
+                messages = [(None, None)]
 
             # Protocol change.
             rps_enabled = tx["block_index"] >= 308500 or config.TESTNET or config.REGTEST
 
-            supported = True
+            supported = []
 
-            if message_type_id == send.ID:
-                send.parse(db, tx, message)
-            elif message_type_id == enhanced_send.ID and util.enabled(
-                "enhanced_sends", block_index=tx["block_index"]
-            ):
-                enhanced_send.parse(db, tx, message)
-            elif message_type_id == mpma.ID and util.enabled(
-                "mpma_sends", block_index=tx["block_index"]
-            ):
-                mpma.parse(db, tx, message)
-            elif message_type_id == order.ID:
-                order.parse(db, tx, message)
-            elif message_type_id == btcpay.ID:
-                btcpay.parse(db, tx, message)
-            elif message_type_id == issuance.ID or (
-                util.enabled("issuance_backwards_compatibility", block_index=tx["block_index"])
-                and message_type_id == issuance.LR_ISSUANCE_ID
-            ):
-                issuance.parse(db, tx, message, message_type_id)
-            elif (
-                message_type_id == issuance.SUBASSET_ID
-                and util.enabled("subassets", block_index=tx["block_index"])
-            ) or (
-                util.enabled("issuance_backwards_compatibility", block_index=tx["block_index"])
-                and message_type_id == issuance.LR_SUBASSET_ID
-            ):
-                issuance.parse(db, tx, message, message_type_id)
-            elif message_type_id == broadcast.ID:
-                broadcast.parse(db, tx, message)
-            elif message_type_id == bet.ID:
-                bet.parse(db, tx, message)
-            elif message_type_id == dividend.ID:
-                dividend.parse(db, tx, message)
-            elif message_type_id == cancel.ID:
-                cancel.parse(db, tx, message)
-            elif message_type_id == rps.ID and rps_enabled:
-                rps.parse(db, tx, message)
-            elif message_type_id == rpsresolve.ID and rps_enabled:
-                rpsresolve.parse(db, tx, message)
-            elif message_type_id == destroy.ID and util.enabled(
-                "destroy_reactivated", block_index=tx["block_index"]
-            ):
-                destroy.parse(db, tx, message)
-            elif message_type_id == sweep.ID and util.enabled(
-                "sweep_send", block_index=tx["block_index"]
-            ):
-                sweep.parse(db, tx, message)
-            elif message_type_id == dispenser.ID and util.enabled(
-                "dispensers", block_index=tx["block_index"]
-            ):
-                dispenser.parse(db, tx, message)
-            elif message_type_id == dispenser.DISPENSE_ID and util.enabled(
-                "dispensers", block_index=tx["block_index"]
-            ):
-                dispense.parse(db, tx)
-            elif message_type_id == fairminter.ID and util.enabled(
-                "fairminter", block_index=tx["block_index"]
-            ):
-                fairminter.parse(db, tx, message)
-            elif message_type_id == fairmint.ID and util.enabled(
-                "fairminter", block_index=tx["block_index"]
-            ):
-                fairmint.parse(db, tx, message)
-            elif message_type_id == utxo.ID and util.enabled(
-                "utxo_support", block_index=tx["block_index"]
-            ):
-                utxo.parse(db, tx, message)
-            else:
-                supported = False
+            for message_type_id, message in messages:
+                supported.append(True)
+                if message_type_id == send.ID:
+                    send.parse(db, tx, message)
+                elif message_type_id == enhanced_send.ID and util.enabled(
+                    "enhanced_sends", block_index=tx["block_index"]
+                ):
+                    enhanced_send.parse(db, tx, message)
+                elif message_type_id == mpma.ID and util.enabled(
+                    "mpma_sends", block_index=tx["block_index"]
+                ):
+                    mpma.parse(db, tx, message)
+                elif message_type_id == order.ID:
+                    order.parse(db, tx, message)
+                elif message_type_id == btcpay.ID:
+                    btcpay.parse(db, tx, message)
+                elif message_type_id == issuance.ID or (
+                    util.enabled("issuance_backwards_compatibility", block_index=tx["block_index"])
+                    and message_type_id == issuance.LR_ISSUANCE_ID
+                ):
+                    issuance.parse(db, tx, message, message_type_id)
+                elif (
+                    message_type_id == issuance.SUBASSET_ID
+                    and util.enabled("subassets", block_index=tx["block_index"])
+                ) or (
+                    util.enabled("issuance_backwards_compatibility", block_index=tx["block_index"])
+                    and message_type_id == issuance.LR_SUBASSET_ID
+                ):
+                    issuance.parse(db, tx, message, message_type_id)
+                elif message_type_id == broadcast.ID:
+                    broadcast.parse(db, tx, message)
+                elif message_type_id == bet.ID:
+                    bet.parse(db, tx, message)
+                elif message_type_id == dividend.ID:
+                    dividend.parse(db, tx, message)
+                elif message_type_id == cancel.ID:
+                    cancel.parse(db, tx, message)
+                elif message_type_id == rps.ID and rps_enabled:
+                    rps.parse(db, tx, message)
+                elif message_type_id == rpsresolve.ID and rps_enabled:
+                    rpsresolve.parse(db, tx, message)
+                elif message_type_id == destroy.ID and util.enabled(
+                    "destroy_reactivated", block_index=tx["block_index"]
+                ):
+                    destroy.parse(db, tx, message)
+                elif message_type_id == sweep.ID and util.enabled(
+                    "sweep_send", block_index=tx["block_index"]
+                ):
+                    sweep.parse(db, tx, message)
+                elif message_type_id == dispenser.ID and util.enabled(
+                    "dispensers", block_index=tx["block_index"]
+                ):
+                    dispenser.parse(db, tx, message)
+                elif message_type_id == dispenser.DISPENSE_ID and util.enabled(
+                    "dispensers", block_index=tx["block_index"]
+                ):
+                    dispense.parse(db, tx)
+                elif message_type_id == fairminter.ID and util.enabled(
+                    "fairminter", block_index=tx["block_index"]
+                ):
+                    fairminter.parse(db, tx, message)
+                elif message_type_id == fairmint.ID and util.enabled(
+                    "fairminter", block_index=tx["block_index"]
+                ):
+                    fairmint.parse(db, tx, message)
+                elif message_type_id == utxo.ID and util.enabled(
+                    "utxo_support", block_index=tx["block_index"]
+                ):
+                    utxo.parse(db, tx, message)
+                else:
+                    supported[-1] = False
+            supported = any(supported)
 
             ledger.add_to_journal(
                 db,

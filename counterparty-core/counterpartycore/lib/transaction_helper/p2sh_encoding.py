@@ -9,19 +9,22 @@ import struct
 import bitcoin as bitcoinlib
 from bitcoin.core.script import CScript
 
-from counterpartycore.lib import config, exceptions, script
+from counterpartycore.lib import config, exceptions, script, util
 
 logger = logging.getLogger(config.LOGGER_NAME)
 
 
-def maximum_data_chunk_size(pubkeylength):
+def maximum_data_chunk_size(pubkeylength, block_index):
     if pubkeylength >= 0:
         return (
-            bitcoinlib.core.script.MAX_SCRIPT_ELEMENT_SIZE - len(config.PREFIX) - pubkeylength - 12
+            bitcoinlib.core.script.MAX_SCRIPT_ELEMENT_SIZE
+            - len(util.prefix(block_index))
+            - pubkeylength
+            - 12
         )  # Two bytes are for unique offset. This will work for a little more than 1000 outputs
     else:
         return (
-            bitcoinlib.core.script.MAX_SCRIPT_ELEMENT_SIZE - len(config.PREFIX) - 44
+            bitcoinlib.core.script.MAX_SCRIPT_ELEMENT_SIZE - len(util.prefix(block_index)) - 44
         )  # Redeemscript size for p2pkh addresses, multisig won't work here
 
 
@@ -63,7 +66,7 @@ def calculate_outputs(destination_outputs, data_array, fee_per_kb, exact_fee=Non
     return size_for_fee, datatx_necessary_fee, data_value, data_btc_out
 
 
-def decode_p2sh_input(asm, p2sh_is_segwit=False):
+def decode_p2sh_input(asm, block_index, p2sh_is_segwit=False):
     """Looks at the scriptSig for the input of the p2sh-encoded data transaction
     [signature] [data] [OP_HASH160 ... OP_EQUAL]
     """
@@ -86,8 +89,8 @@ def decode_p2sh_input(asm, p2sh_is_segwit=False):
         datachunk, redeem_script, _substitute_script = asm
 
     data = datachunk
-    if data[: len(config.PREFIX)] == config.PREFIX:
-        data = data[len(config.PREFIX) :]
+    if data[: len(util.prefix(block_index))] == util.prefix(block_index):
+        data = data[len(util.prefix(block_index)) :]
     else:
         if data == b"":
             return source, None, None

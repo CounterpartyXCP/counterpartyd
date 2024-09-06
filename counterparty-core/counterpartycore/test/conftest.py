@@ -371,10 +371,6 @@ def cp_server(request):
     print(f"cp_server: {dbfile} {sqlfile} {options}")
     db = util_test.init_database(sqlfile, dbfile, options)  # noqa: F841
 
-    # monkeypatch this here because init_mock_functions can run before cp_server
-    if hasattr(config, "PREFIX"):
-        config.PREFIX = b"TESTXXXX"
-
     request.addfinalizer(lambda: util_test.remove_database_files(dbfile))
 
     return db
@@ -595,6 +591,9 @@ def init_mock_functions(request, monkeypatch, mock_utxos, rawtransactions_db):
     def get_transaction_fee(db, transaction_type, block_index):
         return 10
 
+    def prefix(block_index):
+        return b"TESTXXXX"
+
     monkeypatch.setattr("counterpartycore.lib.transaction.arc4.init_arc4", init_arc4)
     monkeypatch.setattr(
         "counterpartycore.lib.backend.addrindexrs.get_unspent_txouts", get_unspent_txouts
@@ -603,8 +602,7 @@ def init_mock_functions(request, monkeypatch, mock_utxos, rawtransactions_db):
     monkeypatch.setattr("counterpartycore.lib.ledger.curr_time", curr_time)
     monkeypatch.setattr("counterpartycore.lib.util.date_passed", date_passed)
     monkeypatch.setattr("counterpartycore.lib.api.util.init_api_access_log", init_api_access_log)
-    if hasattr(config, "PREFIX"):
-        monkeypatch.setattr("counterpartycore.lib.config.PREFIX", b"TESTXXXX")
+
     monkeypatch.setattr(
         "counterpartycore.lib.backend.bitcoind.getrawtransaction", mocked_getrawtransaction
     )
@@ -636,3 +634,4 @@ def init_mock_functions(request, monkeypatch, mock_utxos, rawtransactions_db):
     )
 
     monkeypatch.setattr("counterpartycore.lib.gas.get_transaction_fee", get_transaction_fee)
+    monkeypatch.setattr("counterpartycore.lib.util.prefix", prefix)

@@ -133,14 +133,16 @@ def validate(db, source, timestamp, value, fee_fraction_int, text, block_index):
     return problems
 
 
-def compose(db, source: str, timestamp: int, value: float, fee_fraction: float, text: str):
+def compose(
+    db, source: str, timestamp: int, value: float, fee_fraction: float, text: str, no_validate=False
+):
     # Store the fee fraction as an integer.
     fee_fraction_int = int(fee_fraction * 1e8)
 
     problems = validate(
         db, source, timestamp, value, fee_fraction_int, text, util.CURRENT_BLOCK_INDEX
     )
-    if problems:
+    if problems and not no_validate:
         raise exceptions.ComposeError(problems)
 
     data = message_type.pack(ID)

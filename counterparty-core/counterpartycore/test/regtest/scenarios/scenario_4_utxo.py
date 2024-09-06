@@ -597,12 +597,6 @@ SCENARIO = [
                     {
                         "addresses": [
                             {
-                                "address": "$ADDRESS_6",
-                                "quantity": 74999997333,
-                                "utxo": None,
-                                "utxo_address": None,
-                            },
-                            {
                                 "address": "$ADDRESS_1",
                                 "quantity": 84849988167,
                                 "utxo": None,
@@ -611,6 +605,12 @@ SCENARIO = [
                             {
                                 "address": "$ADDRESS_5",
                                 "quantity": 74999997500,
+                                "utxo": None,
+                                "utxo_address": None,
+                            },
+                            {
+                                "address": "$ADDRESS_6",
+                                "quantity": 74999997333,
                                 "utxo": None,
                                 "utxo_address": None,
                             },

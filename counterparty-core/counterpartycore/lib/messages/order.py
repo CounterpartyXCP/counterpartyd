@@ -459,6 +459,7 @@ def compose(
     get_quantity: int,
     expiration: int,
     fee_required: int,
+    no_validate=False,
 ):
     cursor = db.cursor()
 
@@ -467,10 +468,11 @@ def compose(
     get_asset = ledger.resolve_subasset_longname(db, get_asset)
 
     # Check balance.
-    if give_asset != config.BTC:
-        balance = ledger.get_balance(db, source, give_asset)
-        if balance < give_quantity:
-            raise exceptions.ComposeError("insufficient funds")
+    if not no_validate:
+        if give_asset != config.BTC:
+            balance = ledger.get_balance(db, source, give_asset)
+            if balance < give_quantity:
+                raise exceptions.ComposeError("insufficient funds")
 
     problems = validate(
         db,
@@ -483,11 +485,11 @@ def compose(
         fee_required,
         util.CURRENT_BLOCK_INDEX,
     )
-    if problems:
+    if problems and not no_validate:
         raise exceptions.ComposeError(problems)
 
-    give_id = ledger.get_asset_id(db, give_asset, util.CURRENT_BLOCK_INDEX)
-    get_id = ledger.get_asset_id(db, get_asset, util.CURRENT_BLOCK_INDEX)
+    give_id = ledger.get_asset_id(db, give_asset, util.CURRENT_BLOCK_INDEX, no_validate)
+    get_id = ledger.get_asset_id(db, get_asset, util.CURRENT_BLOCK_INDEX, no_validate)
     data = message_type.pack(ID)
     data += struct.pack(
         FORMAT, give_id, give_quantity, get_id, get_quantity, expiration, fee_required

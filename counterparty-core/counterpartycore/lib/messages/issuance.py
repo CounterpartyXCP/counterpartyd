@@ -405,6 +405,7 @@ def compose(
     lock: bool = None,
     reset: bool = None,
     description: str = None,
+    no_validate=False,
 ):
     # Callability is deprecated, so for re‐issuances set relevant parameters
     # to old values; for first issuances, make uncallable.
@@ -470,7 +471,7 @@ def compose(
         subasset_longname,
         util.CURRENT_BLOCK_INDEX,
     )
-    if problems:
+    if problems and not no_validate:
         raise exceptions.ComposeError(problems)
 
     if subasset_longname is None or reissuance:
