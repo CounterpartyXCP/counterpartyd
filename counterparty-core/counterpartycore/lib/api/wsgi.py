@@ -1,7 +1,7 @@
+import errno
 import logging
 import multiprocessing
 import os
-import signal
 import sys
 import threading
 
@@ -58,13 +58,19 @@ class NodeStatusCheckerThread(threading.Thread):
                 refresh_current_state(self.ledger_db, self.state_db)
                 self.stop_event.wait(timeout=1)
         finally:
+            logger.warning("Closing CurrentStateThread db..")
             self.state_db.close()
             self.ledger_db.close()
 
     def stop(self):
+        logger.debug("Stopping CurrentStateUpdater thread...")
         self.stop_event.set()
         if self.is_alive():
             self.join()
+
+
+class HaltServer(BaseException):
+    pass
 
 
 class GunicornArbiter(Arbiter):
@@ -75,6 +81,13 @@ class GunicornArbiter(Arbiter):
         self.graceful_timeout = 30
         self.max_requests = 1000
         self.max_requests_jitter = 50
+        self.init_loggers()
+
+    def init_loggers(self):
+        for handler in self.log.error_log.handlers:
+            self.log.error_log.handlers.remove(handler)
+        for handler in logger.handlers:
+            self.log.error_log.addHandler(handler)
 
     def handle_winch(self):
         pass
@@ -101,6 +114,7 @@ class GunicornArbiter(Arbiter):
         global logger  # noqa F811
         worker.pid = os.getpid()
         logger = log.re_set_up(f".gunicorn.{worker.pid}", api=True)
+        self.init_loggers()
         try:
             gunicorn_util._setproctitle(f"worker [{self.proc_name}]")
             logger.trace("Booting Gunicorn worker with pid: %s", worker.pid)
@@ -126,12 +140,42 @@ class GunicornArbiter(Arbiter):
             except Exception:
                 logger.warning("Exception during worker exit")
 
+    def reap_workers(self):
+        """\
+        Reap workers to avoid zombie processes
+        """
+        try:
+            while True:
+                wpid, status = os.waitpid(-1, os.WNOHANG)
+                if not wpid:
+                    break
+                if self.reexec_pid == wpid:
+                    self.reexec_pid = 0
+                else:
+                    # A worker was terminated. If the termination reason was
+                    # that it could not boot, we'll shut it down to avoid
+                    # infinite start/stop cycles.
+                    exitcode = status >> 8
+                    if exitcode != 0:
+                        self.log.error("Worker (pid:%s) exited with code %s", wpid, exitcode)
+                    if exitcode == self.WORKER_BOOT_ERROR:
+                        reason = "Worker failed to boot."
+                        raise HaltServer(reason, self.WORKER_BOOT_ERROR)
+                    if exitcode == self.APP_LOAD_ERROR:
+                        reason = "App failed to load."
+                        raise HaltServer(reason, self.APP_LOAD_ERROR)
+
+                    worker = self.WORKERS.pop(wpid, None)
+                    if not worker:
+                        continue
+                    worker.tmp.close()
+                    self.cfg.child_exit(self, worker)
+        except OSError as e:
+            if e.errno != errno.ECHILD:
+                raise
+
     def kill_all_workers(self):
-        for pid in list(self.WORKERS.keys()):
-            try:
-                os.kill(pid, signal.SIGKILL)
-            except ProcessLookupError:
-                pass
+        self.reap_workers()
 
 
 class GunicornApplication(gunicorn.app.base.BaseApplication):

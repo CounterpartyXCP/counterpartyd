@@ -637,7 +637,6 @@ class APIWatcher(threading.Thread):
         logger.debug("Initializing API Watcher...")
         self.state_db = None
         self.ledger_db = None
-        self.current_state_thread = None
         self.stop_event = threading.Event()  # Add stop event
         self.state_db = state_db
         self.ledger_db = database.get_db_connection(
@@ -666,12 +665,11 @@ class APIWatcher(threading.Thread):
                 if self.stop_event.is_set():
                     break
         finally:
+            logger.warning("Closing API Watcher db...")
             if self.state_db is not None:
                 self.state_db.close()
             if self.ledger_db is not None:
                 self.ledger_db.close()
-            if self.current_state_thread is not None:
-                self.current_state_thread.stop()
 
     def stop(self):
         logger.info("Stopping API Watcher thread...")
