@@ -69,12 +69,8 @@ class NodeStatusCheckerThread(threading.Thread):
 
 class GunicornArbiter(Arbiter):
     def __init__(self, app):
-        super().__init__(app)  # Pass 'app' instead of 'app.cfg'
+        super().__init__(app)
         self.app = app
-        self.timeout = 30
-        self.graceful_timeout = 30
-        self.max_requests = 1000
-        self.max_requests_jitter = 50
 
     def handle_winch(self):
         pass
@@ -138,6 +134,10 @@ class GunicornApplication(gunicorn.app.base.BaseApplication):
     def __init__(self, app, args=None):
         self.options = {
             "bind": "%s:%s" % (config.API_HOST, config.API_PORT),
+            "timeout": 10,
+            "graceful_timeout": 10,
+            "max_requests": 1000,
+            "max_requests_jitter": 250,
             "workers": config.GUNICORN_WORKERS,
             "worker_class": "gthread",
             "daemon": True,

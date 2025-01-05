@@ -347,7 +347,7 @@ CONFIG_ARGS = [
         ("--gunicorn-workers",),
         {
             "type": int,
-            "default": 2 * os.cpu_count() + 1,
+            "default": 2 * os.cpu_count() + 1 - 2,  # - 2 to account for the follow and api watcher processes
             "help": "number of worker processes for gunicorn (if enabled)",
         },
     ],
