@@ -701,7 +701,7 @@ CHECKPOINTS_MAINNET = {
     },
 }
 
-CONSENSUS_HASH_VERSION_TESTNET = 7
+CONSENSUS_HASH_VERSION_TESTNET3 = 7
 CHECKPOINTS_TESTNET = {
     config.BLOCK_FIRST_TESTNET: {
         "ledger_hash": "63f0fef31d02da85fa779e9a0e1b585b1a6a4e59e14564249e288e074e91c223",
@@ -915,8 +915,8 @@ def consensus_hash(db, field, previous_consensus_hash, content):
             )
 
     # Calculate current hash.
-    if config.TESTNET:
-        consensus_hash_version = CONSENSUS_HASH_VERSION_TESTNET
+    if config.TESTNET3:
+        consensus_hash_version = CONSENSUS_HASH_VERSION_TESTNET3
     elif config.TESTNET4:
         consensus_hash_version = CONSENSUS_HASH_VERSION_TESTNET4
     elif config.REGTEST:
@@ -944,7 +944,7 @@ def consensus_hash(db, field, previous_consensus_hash, content):
             )
 
     # Check against checkpoints.
-    if config.TESTNET:
+    if config.TESTNET3:
         checkpoints = CHECKPOINTS_TESTNET
     elif config.TESTNET4:
         checkpoints = CHECKPOINTS_TESTNET4
@@ -1071,8 +1071,8 @@ def check_need_reparse(version_minor, message):
         return
     if config.TESTNET4:
         need_reparse_from = config.NEED_REPARSE_IF_MINOR_IS_LESS_THAN_TESTNET4
-    elif config.TESTNET:
-        need_reparse_from = config.NEED_REPARSE_IF_MINOR_IS_LESS_THAN_TESTNET
+    elif config.TESTNET3:
+        need_reparse_from = config.NEED_REPARSE_IF_MINOR_IS_LESS_THAN_TESTNET3
     else:
         need_reparse_from = config.NEED_REPARSE_IF_MINOR_IS_LESS_THAN
     if need_reparse_from is not None:
@@ -1090,8 +1090,8 @@ def check_need_rollback(version_minor, message):
         return
     if config.TESTNET4:
         need_rollback_from = config.NEED_ROLLBACK_IF_MINOR_IS_LESS_THAN_TESTNET4
-    elif config.TESTNET:
-        need_rollback_from = config.NEED_ROLLBACK_IF_MINOR_IS_LESS_THAN_TESTNET
+    elif config.TESTNET3:
+        need_rollback_from = config.NEED_ROLLBACK_IF_MINOR_IS_LESS_THAN_TESTNET3
     else:
         need_rollback_from = config.NEED_ROLLBACK_IF_MINOR_IS_LESS_THAN
     if need_rollback_from is not None:

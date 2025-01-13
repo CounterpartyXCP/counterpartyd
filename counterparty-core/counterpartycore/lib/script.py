@@ -308,7 +308,7 @@ def pubkey_to_p2whash(pubkey):
 
 
 def pubkey_to_p2whash2(pubkey):
-    if config.NETWORK_NAME == "testnet4":
+    if config.NETWORK_NAME.startswith("testnet"):
         setup("testnet")
     else:
         setup(config.NETWORK_NAME)
@@ -468,7 +468,7 @@ class AltcoinSupportError(Exception):
 
 def private_key_to_public_key(private_key_wif):
     """Convert private key to public key."""
-    if config.TESTNET:
+    if config.TESTNET3:
         allowable_wif_prefixes = [config.PRIVATEKEY_VERSION_TESTNET]
     elif config.TESTNET4:
         allowable_wif_prefixes = [config.PRIVATEKEY_VERSION_TESTNET4]

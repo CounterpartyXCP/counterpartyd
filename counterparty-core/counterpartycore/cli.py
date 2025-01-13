@@ -58,11 +58,11 @@ CONFIG_ARGS = [
         },
     ],
     [
-        ("--testnet",),
+        ("--testnet3",),
         {
             "action": "store_true",
             "default": False,
-            "help": f"use {config.BTC_NAME} testnet addresses and block numbers",
+            "help": f"use {config.BTC_NAME} testnet3 addresses and block numbers",
         },
     ],
     [

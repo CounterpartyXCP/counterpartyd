@@ -26,7 +26,7 @@ pub fn script_to_address(script_pubkey: Vec<u8>, network: &str) -> PyResult<Stri
     // Convert the network string to a Network enum value
     let network_enum = match network {
         "mainnet" => Network::Bitcoin,
-        "testnet" => Network::Testnet,
+        "testnet3" => Network::Testnet,
         "testnet4" => Network::Testnet4,
         "signet" => Network::Signet,
         "regtest" => Network::Regtest,
@@ -87,7 +87,7 @@ pub fn script_to_address2(script_pubkey: Vec<u8>, network: &str) -> PyResult<Str
     // Convert the network string to a Network enum value
     let network_enum = match network {
         "mainnet" => Network::Bitcoin,
-        "testnet" => Network::Testnet,
+        "testnet3" => Network::Testnet,
         "testnet4" => Network::Testnet4,
         "signet" => Network::Signet,
         "regtest" => Network::Regtest,

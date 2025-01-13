@@ -85,7 +85,7 @@ def init_database(sqlfile, dbfile, options=None):
     kwargs = COUNTERPARTYD_OPTIONS.copy()
     kwargs.update(options or {})
 
-    server.initialise(database_file=dbfile, testnet=True, verbose=True, **kwargs)
+    server.initialise(database_file=dbfile, testnet3=True, verbose=True, **kwargs)
 
     restore_database(config.DATABASE, sqlfile)
     db = database.get_connection(read_only=False)  # reinit the DB to deal with the restoring
@@ -627,7 +627,7 @@ def initialise_db(db):
 
 def run_scenario(scenario):
     """Execute a scenario for integration test, returns a dump of the db, a json with raw transactions and the full log."""
-    server.initialise(database_file=":memory:", testnet=True, **COUNTERPARTYD_OPTIONS)
+    server.initialise(database_file=":memory:", testnet3=True, **COUNTERPARTYD_OPTIONS)
     config.PREFIX = b"TESTXXXX"
     util.FIRST_MULTISIG_BLOCK_TESTNET = 1
     checkpoints = dict(check.CHECKPOINTS_TESTNET)
@@ -1092,7 +1092,7 @@ def reparse(testnet=True, checkpoint_count=5):
 
     # create a new in-memory DB
     options = dict(COUNTERPARTYD_OPTIONS)
-    server.initialise(database_file=":memory:", testnet=testnet, **options)
+    server.initialise(database_file=":memory:", testnet3=testnet, **options)
     memory_db = database.get_connection(read_only=False)
 
     # connect to the on-disk DB

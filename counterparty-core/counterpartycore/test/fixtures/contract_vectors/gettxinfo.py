@@ -5,7 +5,7 @@ from counterpartycore.lib.gettxinfo import SighashFlagError
 
 from ..params import DEFAULT_PARAMS as DP
 
-config.NETWORK_NAME = "testnet"
+config.NETWORK_NAME = "testnet3"
 config.PREFIX = b"TESTXXXX"
 
 GETTXINFO_VECTOR = {

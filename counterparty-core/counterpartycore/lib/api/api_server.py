@@ -77,14 +77,6 @@ def is_server_ready():
 
 
 def api_root():
-    network = "mainnet"
-    if config.TESTNET:
-        network = "testnet"
-    elif config.TESTNET4:
-        network = "testnet4"
-    elif config.REGTEST:
-        network = "regtest"
-
     with StateDBConnectionPool().connection() as state_db:
         counterparty_height = api_watcher.get_last_block_parsed(state_db)
 
@@ -99,7 +91,7 @@ def api_root():
 
     return {
         "server_ready": server_ready,
-        "network": network,
+        "network": config.NETWORK_NAME,
         "version": config.VERSION_STRING,
         "backend_height": util.CURRENT_BACKEND_HEIGHT,
         "counterparty_height": counterparty_height,

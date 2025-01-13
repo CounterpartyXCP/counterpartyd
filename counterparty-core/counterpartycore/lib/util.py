@@ -560,7 +560,7 @@ def enabled(change_name, block_index=None):
                 return False
         return True  # All changes are always enabled on REGTEST
 
-    if config.TESTNET:
+    if config.TESTNET3:
         index_name = "testnet_block_index"
     elif config.TESTNET4:
         index_name = "testnet4_block_index"
@@ -582,7 +582,7 @@ def get_change_block_index(change_name):
     if config.REGTEST:
         return 0
 
-    if config.TESTNET:
+    if config.TESTNET3:
         index_name = "testnet_block_index"
     else:
         index_name = "block_index"
@@ -604,7 +604,7 @@ def get_value_by_block_index(change_name, block_index=None):
                 max_block_index = key
         return PROTOCOL_CHANGES[change_name]["testnet"][max_block_index]["value"]
 
-    if config.TESTNET:
+    if config.TESTNET3:
         index_name = "testnet"
     elif config.TESTNET4:
         index_name = "testnet4"
@@ -619,7 +619,7 @@ def get_value_by_block_index(change_name, block_index=None):
 
 
 def is_test_network():
-    return config.TESTNET or config.TESTNET4 or config.REGTEST
+    return config.TESTNET3 or config.TESTNET4 or config.REGTEST
 
 
 def after_block_or_test_network(tx_block_index, target_block_index):

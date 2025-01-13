@@ -17,7 +17,7 @@ from counterpartycore.test.util_test import CURR_DIR
 def test_check_database_version():
     server.initialise(
         database_file=tempfile.gettempdir() + "/fixtures.unittest.db",
-        testnet=True,
+        testnet3=True,
         **util_test.COUNTERPARTYD_OPTIONS,
     )
     util_test.restore_database(

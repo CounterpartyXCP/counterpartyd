@@ -43,7 +43,7 @@ def initialize(
     sys.excepthook = handle_exception
 
     # testnet
-    config.TESTNET = testnet or False
+    config.TESTNET3 = testnet or False
 
     config.REGTEST = regtest or False
 

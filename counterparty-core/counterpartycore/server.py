@@ -48,7 +48,7 @@ def initialise(*args, **kwargs):
         log_file=kwargs.pop("log_file", None),
         api_log_file=kwargs.pop("api_log_file", None),
         no_log_files=kwargs.pop("no_log_files", False),
-        testnet=kwargs.get("testnet", False),
+        testnet3=kwargs.get("testnet3", False),
         testnet4=kwargs.get("testnet4", False),
         regtest=kwargs.get("regtest", False),
         action=kwargs.get("action", None),
@@ -66,7 +66,7 @@ def initialise_log_config(
     log_file=None,
     api_log_file=None,
     no_log_files=False,
-    testnet=False,
+    testnet3=False,
     testnet4=False,
     regtest=False,
     action=None,
@@ -93,8 +93,8 @@ def initialise_log_config(
         config.LOG_LEVEL_STRING = "trace"
 
     network = ""
-    if testnet:
-        network += ".testnet"
+    if testnet3:
+        network += ".testnet3"
     if regtest:
         network += ".regtest"
     if testnet4:
@@ -133,7 +133,7 @@ def initialise_log_config(
 def initialise_config(
     data_dir=None,
     cache_dir=None,
-    testnet=False,
+    testnet3=False,
     testnet4=False,
     regtest=False,
     api_limit_rows=1000,
@@ -196,10 +196,10 @@ def initialise_config(
     config.CACHE_DIR = cache_dir
 
     # testnet
-    if testnet:
-        config.TESTNET = testnet
+    if testnet3:
+        config.TESTNET3 = testnet3
     else:
-        config.TESTNET = False
+        config.TESTNET3 = False
 
     if testnet4:
         config.TESTNET4 = testnet4
@@ -212,7 +212,7 @@ def initialise_config(
     else:
         config.REGTEST = False
 
-    if config.TESTNET or config.TESTNET4:
+    if config.TESTNET3 or config.TESTNET4:
         bitcoinlib.SelectParams("testnet")
     elif config.REGTEST:
         bitcoinlib.SelectParams("regtest")
@@ -220,8 +220,8 @@ def initialise_config(
         bitcoinlib.SelectParams("mainnet")
 
     config.NETWORK_NAME = "mainnet"
-    if config.TESTNET:
-        config.NETWORK_NAME = "testnet"
+    if config.TESTNET3:
+        config.NETWORK_NAME = "testnet3"
     if config.TESTNET4:
         config.NETWORK_NAME = "testnet4"
     if config.REGTEST:
@@ -262,7 +262,7 @@ def initialise_config(
     if backend_port:
         config.BACKEND_PORT = backend_port
     else:
-        if config.TESTNET:
+        if config.TESTNET3:
             config.BACKEND_PORT = config.DEFAULT_BACKEND_PORT_TESTNET
         elif config.TESTNET4:
             config.BACKEND_PORT = config.DEFAULT_BACKEND_PORT_TESTNET4
@@ -352,7 +352,7 @@ def initialise_config(
     if rpc_port:
         config.RPC_PORT = rpc_port
     else:
-        if config.TESTNET:
+        if config.TESTNET3:
             config.RPC_PORT = config.DEFAULT_RPC_PORT_TESTNET
         elif config.TESTNET4:
             config.RPC_PORT = config.DEFAULT_RPC_PORT_TESTNET4
@@ -402,7 +402,7 @@ def initialise_config(
     if api_port:
         config.API_PORT = api_port
     else:
-        if config.TESTNET:
+        if config.TESTNET3:
             config.API_PORT = config.DEFAULT_API_PORT_TESTNET
         elif config.TESTNET4:
             config.API_PORT = config.DEFAULT_API_PORT_TESTNET4
@@ -425,7 +425,7 @@ def initialise_config(
     if zmq_publisher_port:
         config.ZMQ_PUBLISHER_PORT = zmq_publisher_port
     else:
-        if config.TESTNET:
+        if config.TESTNET3:
             config.ZMQ_PUBLISHER_PORT = config.DEFAULT_ZMQ_PUBLISHER_PORT_TESTNET
         elif config.TESTNET4:
             config.ZMQ_PUBLISHER_PORT = config.DEFAULT_ZMQ_PUBLISHER_PORT_TESTNET4
@@ -468,7 +468,7 @@ def initialise_config(
     config.PREFIX = b"CNTRPRTY"  # 8 bytes
 
     # (more) Testnet
-    if config.TESTNET:
+    if config.TESTNET3:
         config.MAGIC_BYTES = config.MAGIC_BYTES_TESTNET
         config.ADDRESSVERSION = config.ADDRESSVERSION_TESTNET
         config.P2SH_ADDRESSVERSION = config.P2SH_ADDRESSVERSION_TESTNET
@@ -526,8 +526,10 @@ def initialise_config(
             raise ConfigurationError("Invalid Electrs URL")
         config.ELECTRS_URL = electrs_url
     else:
-        if config.NETWORK_NAME == "testnet":
-            config.ELECTRS_URL = config.DEFAULT_ELECTRS_URL_TESTNET
+        if config.NETWORK_NAME == "testnet3":
+            config.ELECTRS_URL = config.DEFAULT_ELECTRS_URL_TESTNET3
+        elif config.NETWORK_NAME == "testnet4":
+            config.ELECTRS_URL = config.DEFAULT_ELECTRS_URL_TESTNET4
         elif config.NETWORK_NAME == "mainnet":
             config.ELECTRS_URL = config.DEFAULT_ELECTRS_URL_MAINNET
         else:
@@ -539,7 +541,7 @@ def initialise_log_and_config(args, api=False):
     init_args = {
         "data_dir": args.data_dir,
         "cache_dir": args.cache_dir,
-        "testnet": args.testnet,
+        "testnet3": args.testnet3,
         "testnet4": args.testnet4,
         "regtest": args.regtest,
         "api_limit_rows": args.api_limit_rows,
@@ -589,7 +591,7 @@ def initialise_log_and_config(args, api=False):
         log_file=args.log_file,
         api_log_file=args.api_log_file,
         no_log_files=args.no_log_files,
-        testnet=args.testnet,
+        testnet3=args.testnet3,
         testnet4=args.testnet4,
         regtest=args.regtest,
         action=args.action,

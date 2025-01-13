@@ -55,7 +55,7 @@ def test_rpc_call(init_mock):
         bitcoind.rpc("return_none", [])
     assert (
         str(exc_info.value)
-        == "Cannot communicate with Bitcoin Core at `http://localhost:14000`. (server is set to run on testnet, is backend?)"
+        == "Cannot communicate with Bitcoin Core at `http://localhost:14000`. (server is set to run on testnet3, is backend?)"
     )
 
     with pytest.raises(exceptions.BitcoindRPCError) as exc_info:
@@ -69,7 +69,7 @@ def test_rpc_call(init_mock):
         bitcoind.rpc("return_500", [])
     assert (
         str(exc_info.value)
-        == "Cannot communicate with Bitcoin Core at `http://localhost:14000`. (server is set to run on testnet, is backend?)"
+        == "Cannot communicate with Bitcoin Core at `http://localhost:14000`. (server is set to run on testnet3, is backend?)"
     )
 
     result = bitcoind.rpc("return_batch_list", [])

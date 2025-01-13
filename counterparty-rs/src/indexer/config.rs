@@ -61,11 +61,11 @@ impl<'source> FromPyObject<'source> for Network {
         let network_str: String = obj.extract()?;
         match network_str.trim().to_lowercase().as_str() {
             "mainnet" => Ok(Network::Mainnet),
-            "testnet" => Ok(Network::Testnet),
+            "testnet3" => Ok(Network::Testnet),
             "testnet4" => Ok(Network::Testnet4),
             "regtest" => Ok(Network::Regtest),
             _ => Err(PyErr::new::<PyValueError, _>(
-                "'network' must be either 'mainnet', 'testnet' or 'testnet4'",
+                "'network' must be either 'mainnet', 'testnet3' or 'testnet4'",
             )),
         }
     }
@@ -75,7 +75,7 @@ impl Display for Network {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let s = match self {
             Network::Mainnet => "mainnet",
-            Network::Testnet => "testnet",
+            Network::Testnet => "testnet3",
             Network::Testnet4 => "testnet4",
             Network::Regtest => "regtest",
         };

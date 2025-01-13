@@ -104,11 +104,11 @@ services:
     links:
       - bitcoind-testnet
     ports:
-      - "14000:14000"                                      # API v2
-      - "14100:14100"                                      # API v1
+      - "44000:44000"                                      # API v2
+      - "44100:44100"                                      # API v1
     command:
       - start
-      - "--testnet"
+      - "--testnet4"
       - "--backend-connect=bitcoind-testnet"
       - "--rpc-host=0.0.0.0"
       - "--api-host=0.0.0.0"

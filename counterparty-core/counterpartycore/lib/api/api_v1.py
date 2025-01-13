@@ -864,7 +864,7 @@ class APIServer(threading.Thread):
                 "bitcoind_blocks_behind": bitcoind_blocks_behind,
                 "last_message_index": (last_message["message_index"] if last_message else -1),
                 "api_limit_rows": config.API_LIMIT_ROWS,
-                "running_testnet": config.TESTNET,
+                "running_testnet": config.TESTNET3,
                 "running_testnet4": config.TESTNET4,
                 "running_regtest": config.REGTEST,
                 "version_major": config.VERSION_MAJOR,

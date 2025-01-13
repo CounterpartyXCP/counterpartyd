@@ -271,7 +271,7 @@ def api_server(request, cp_server):
 @pytest.fixture(scope="module")
 def api_server_v2(request, cp_server):
     default_config = {
-        "testnet": False,
+        "testnet3": False,
         "testnet4": False,
         "regtest": False,
         "api_limit_rows": 1000,

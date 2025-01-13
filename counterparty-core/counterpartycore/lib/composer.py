@@ -34,7 +34,7 @@ logger = logging.getLogger(config.LOGGER_NAME)
 
 
 def setup_bitcoinutils():
-    if config.NETWORK_NAME == "testnet4":
+    if config.NETWORK_NAME.startswith("testnet"):
         setup("testnet")
     else:
         setup(config.NETWORK_NAME)

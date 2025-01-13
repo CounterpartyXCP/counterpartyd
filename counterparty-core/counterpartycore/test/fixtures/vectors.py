@@ -7642,7 +7642,7 @@ UNITTEST_VECTOR = (
                     "in": ("BADBASE58III",),
                     "error": (
                         Exception,
-                        "The address BADBASE58III is not a valid bitcoin address (testnet)",
+                        "The address BADBASE58III is not a valid bitcoin address (testnet3)",
                     ),
                 },
             ],

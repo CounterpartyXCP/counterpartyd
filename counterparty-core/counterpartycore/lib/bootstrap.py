@@ -174,6 +174,9 @@ def bootstrap(no_confirm=False, snapshot_url=None):
     clean_data_dir(config.DATA_DIR)
 
     if snapshot_url is None:
+        if config.NETWORK_NAME not in config.BOOTSTRAP_URLS:
+            cprint(f"No bootstrap files for {config.NETWORK_NAME}.", "red")
+            sys.exit(1)
         files = config.BOOTSTRAP_URLS[config.NETWORK_NAME]
     else:
         files = generate_urls(snapshot_url)

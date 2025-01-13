@@ -35,7 +35,14 @@ def is_docker():
 
 
 def get_network():
-    return "TESTNET" if __read_config_with_default("TESTNET", False) else "MAINNET"
+    return (
+        "TESTNET"
+        if (
+            __read_config_with_default("TESTNET4", False)
+            or __read_config_with_default("TESTNET3", False)
+        )
+        else "MAINNET"
+    )
 
 
 def is_force_enabled():

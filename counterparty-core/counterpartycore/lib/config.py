@@ -14,7 +14,8 @@ VERSION_REVISION = int(version[2])
 VERSION_PRE_RELEASE = "-".join(VERSION_STRING.split("-")[1:])
 
 DEFAULT_ELECTRS_URL_MAINNET = "https://blockstream.info/api"
-DEFAULT_ELECTRS_URL_TESTNET = "https://blockstream.info/testnet/api"
+DEFAULT_ELECTRS_URL_TESTNET3 = "https://blockstream.info/testnet/api"
+DEFAULT_ELECTRS_URL_TESTNET4 = "https://mempool.space/testnet4/api"
 
 # When updating to a new verion, we are making a rollback if major version changes.
 # If minor version changes and if needed, we are making a reparse from a given block.
@@ -22,7 +23,7 @@ DEFAULT_ELECTRS_URL_TESTNET = "https://blockstream.info/testnet/api"
 # NEED_REPARSE_IF_MINOR_IS_LESS_THAN = (1, 800000)
 # means that we need to reparse from block 800000 if database minor version is less than 1
 NEED_REPARSE_IF_MINOR_IS_LESS_THAN = [(3, 0), (5, 865999), (6, 867000), (7, 869900)]
-NEED_REPARSE_IF_MINOR_IS_LESS_THAN_TESTNET = [
+NEED_REPARSE_IF_MINOR_IS_LESS_THAN_TESTNET3 = [
     (3, 0),
     (5, 2925799),
     (6, 2925799),
@@ -31,7 +32,7 @@ NEED_REPARSE_IF_MINOR_IS_LESS_THAN_TESTNET = [
 NEED_REPARSE_IF_MINOR_IS_LESS_THAN_TESTNET4 = None
 
 NEED_ROLLBACK_IF_MINOR_IS_LESS_THAN = [(8, 871780)]
-NEED_ROLLBACK_IF_MINOR_IS_LESS_THAN_TESTNET = [(8, 3522632)]
+NEED_ROLLBACK_IF_MINOR_IS_LESS_THAN_TESTNET3 = [(8, 3522632)]
 NEED_ROLLBACK_IF_MINOR_IS_LESS_THAN_TESTNET4 = None
 
 STATE_DB_NEED_REFRESH_ON_VERSION_UPDATE = ["10.9.0-rc.1", "10.9.0"]
@@ -196,7 +197,7 @@ BOOTSTRAP_URLS = {
             "https://storage.googleapis.com/counterparty-bootstrap/state.db.latest.sig",
         ),
     ],
-    "testnet": [
+    "testnet3": [
         (
             "https://storage.googleapis.com/counterparty-bootstrap/counterparty.testnet.db.latest.zst",
             "https://storage.googleapis.com/counterparty-bootstrap/counterparty.testnet.db.latest.sig",
