@@ -75,8 +75,8 @@ def is_address_script(address, script_pub_key):
 ################
 
 
-def address_to_script_pub_key(address, unspent_list, construct_params):
-    helpers.setup_bitcoinutils()
+def address_to_script_pub_key(address, unspent_list=[], construct_params={}, network=None):  # noqa B006
+    helpers.setup_bitcoinutils(network)
     if multisig.is_multisig(address):
         signatures_required, addresses, signatures_possible = multisig.extract_array(address)
         pubkeys = [search_pubkey(addr, unspent_list, construct_params) for addr in addresses]
