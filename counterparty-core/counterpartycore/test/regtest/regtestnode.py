@@ -1061,7 +1061,7 @@ class RegtestNode:
                 "destination": self.addresses[1],
                 "quantity": 10,
                 "asset": "XCP",
-                "sat_per_vbyte": 2,
+                "sat_per_vbyte": 2.31,
                 "verbose": True,
                 "encoding": "multisig",
                 "validate": False,
@@ -1083,7 +1083,7 @@ class RegtestNode:
             unsigned_tx["signed_tx_estimated_size"]["vsize"],
             unsigned_tx["signed_tx_estimated_size"]["adjusted_vsize"],
         )
-        assert unsigned_tx["btc_fee"] == size * 2
+        assert unsigned_tx["btc_fee"] == int(size * 2.31)
 
         legacy_address = self.bitcoin_wallet("getnewaddress", WALLET_NAME, "legacy").strip()
         self.send_transaction(

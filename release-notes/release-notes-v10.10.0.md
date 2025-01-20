@@ -27,6 +27,7 @@
 - Add no_dispense parameter to not automatically compose a dispense transaction even if the destination is a dispenser
 - Add `event_name` parameter to Get Mempool Events By Addresses endpoint
 - Check addresses and hashes format in parameters
+- `sat_per_vbyte` parameter accepts float
 
 ## CLI
 

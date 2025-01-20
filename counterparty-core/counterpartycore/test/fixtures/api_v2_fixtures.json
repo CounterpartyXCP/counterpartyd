@@ -12522,7 +12522,7 @@
                     },
                     {
                         "name": "sat_per_vbyte",
-                        "type": "int",
+                        "type": "float",
                         "default": null,
                         "description": "The fee per vbyte in satoshis",
                         "required": false
@@ -12775,7 +12775,7 @@
                     },
                     {
                         "name": "sat_per_vbyte",
-                        "type": "int",
+                        "type": "float",
                         "default": null,
                         "description": "The fee per vbyte in satoshis",
                         "required": false
@@ -13010,7 +13010,7 @@
                     },
                     {
                         "name": "sat_per_vbyte",
-                        "type": "int",
+                        "type": "float",
                         "default": null,
                         "description": "The fee per vbyte in satoshis",
                         "required": false
@@ -13252,7 +13252,7 @@
                     },
                     {
                         "name": "sat_per_vbyte",
-                        "type": "int",
+                        "type": "float",
                         "default": null,
                         "description": "The fee per vbyte in satoshis",
                         "required": false
@@ -13487,7 +13487,7 @@
                     },
                     {
                         "name": "sat_per_vbyte",
-                        "type": "int",
+                        "type": "float",
                         "default": null,
                         "description": "The fee per vbyte in satoshis",
                         "required": false
@@ -13734,7 +13734,7 @@
                     },
                     {
                         "name": "sat_per_vbyte",
-                        "type": "int",
+                        "type": "float",
                         "default": null,
                         "description": "The fee per vbyte in satoshis",
                         "required": false
@@ -14007,7 +14007,7 @@
                     },
                     {
                         "name": "sat_per_vbyte",
-                        "type": "int",
+                        "type": "float",
                         "default": null,
                         "description": "The fee per vbyte in satoshis",
                         "required": false
@@ -14254,7 +14254,7 @@
                     },
                     {
                         "name": "sat_per_vbyte",
-                        "type": "int",
+                        "type": "float",
                         "default": null,
                         "description": "The fee per vbyte in satoshis",
                         "required": false
@@ -14555,7 +14555,7 @@
                     },
                     {
                         "name": "sat_per_vbyte",
-                        "type": "int",
+                        "type": "float",
                         "default": null,
                         "description": "The fee per vbyte in satoshis",
                         "required": false
@@ -14830,7 +14830,7 @@
                     },
                     {
                         "name": "sat_per_vbyte",
-                        "type": "int",
+                        "type": "float",
                         "default": null,
                         "description": "The fee per vbyte in satoshis",
                         "required": false
@@ -15095,7 +15095,7 @@
                     },
                     {
                         "name": "sat_per_vbyte",
-                        "type": "int",
+                        "type": "float",
                         "default": null,
                         "description": "The fee per vbyte in satoshis",
                         "required": false
@@ -15370,7 +15370,7 @@
                     },
                     {
                         "name": "sat_per_vbyte",
-                        "type": "int",
+                        "type": "float",
                         "default": null,
                         "description": "The fee per vbyte in satoshis",
                         "required": false
@@ -15617,7 +15617,7 @@
                     },
                     {
                         "name": "sat_per_vbyte",
-                        "type": "int",
+                        "type": "float",
                         "default": null,
                         "description": "The fee per vbyte in satoshis",
                         "required": false
@@ -15877,7 +15877,7 @@
                     },
                     {
                         "name": "sat_per_vbyte",
-                        "type": "int",
+                        "type": "float",
                         "default": null,
                         "description": "The fee per vbyte in satoshis",
                         "required": false
@@ -16224,7 +16224,7 @@
                     },
                     {
                         "name": "sat_per_vbyte",
-                        "type": "int",
+                        "type": "float",
                         "default": null,
                         "description": "The fee per vbyte in satoshis",
                         "required": false
@@ -16466,7 +16466,7 @@
                     },
                     {
                         "name": "sat_per_vbyte",
-                        "type": "int",
+                        "type": "float",
                         "default": null,
                         "description": "The fee per vbyte in satoshis",
                         "required": false
@@ -16721,7 +16721,7 @@
                     },
                     {
                         "name": "sat_per_vbyte",
-                        "type": "int",
+                        "type": "float",
                         "default": null,
                         "description": "The fee per vbyte in satoshis",
                         "required": false
@@ -16977,7 +16977,7 @@
                     },
                     {
                         "name": "sat_per_vbyte",
-                        "type": "int",
+                        "type": "float",
                         "default": null,
                         "description": "The fee per vbyte in satoshis",
                         "required": false
@@ -17219,7 +17219,7 @@
                     },
                     {
                         "name": "sat_per_vbyte",
-                        "type": "int",
+                        "type": "float",
                         "default": null,
                         "description": "The fee per vbyte in satoshis",
                         "required": false

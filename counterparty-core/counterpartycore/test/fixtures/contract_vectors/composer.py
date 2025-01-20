@@ -1416,7 +1416,7 @@ COMPOSER_VECTOR = {
                 ),
                 "out": (
                     {
-                        "sat_per_vbyte": 1,
+                        "sat_per_vbyte": 1023 / 1024,
                         "max_fee": 666,
                         "mutlisig_pubkey": DEFAULT_PARAMS["pubkey"][ADDR[0]],
                         "verbose": True,
